@@ -78,3 +78,15 @@ Sempre que fizermos atualizações neste repositório, basta você entrar na sua
 cd /var/www/analist/
 sudo git pull
 ```
+
+---
+
+## 🗑️ Como Desinstalar
+
+Caso precise remover o painel de um servidor, desenvolvemos um script que limpa tudo automaticamente (remove a pasta física do projeto e limpa todas as regras e configurações da porta 3001 no Apache).
+
+Para executar a desinstalação, use o comando:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/LucasGonMoreira/PainelGeral-Monitoramento/main/uninstall.sh | sudo bash
+```
