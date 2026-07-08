@@ -1,0 +1,668 @@
+:root {
+    --bg-dark: #111217;
+    --bg-panel: #1c1d21;
+    --border-color: rgba(255, 255, 255, 0.1);
+
+    --color-green: #10b981;
+    --color-yellow: #f59e0b;
+    --color-red: #1f60c4;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+#azul {
+    color: #1f60c4;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    /* prevents scrollbars since it's an app-like dashboard */
+}
+
+/* App Views */
+.view-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    display: flex;
+    flex-direction: column;
+}
+
+.view-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- HOME DASHBOARD --- */
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.map-header {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #365b8c !important;
+    border-radius: 8px;
+    margin: 15px;
+    background: var(--bg-panel);
+    z-index: 10;
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+.clock {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+}
+
+.home-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 4rem;
+}
+
+.status-grid {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+}
+
+.status-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-10px);
+}
+
+.card-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.status-card.ok .card-icon {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--color-green);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.status-card.attention .card-icon {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--color-yellow);
+}
+
+.status-card.disaster .card-icon {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--color-red);
+}
+
+.status-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.status-card p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 30px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+@keyframes pulse-yellow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 20px rgba(245, 158, 11, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.pulse-red {
+    animation: pulse-red 2s infinite;
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.pulse-yellow {
+    animation: pulse-yellow 2s infinite;
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* --- DRILL-DOWN VIEWS --- */
+.map-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+}
+
+.glass-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 0;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-back svg {
+    width: 20px;
+    height: 20px;
+}
+
+.map-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.drilldown-container {
+    flex: 1;
+    width: 100%;
+    margin-top: 90px;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.drilldown-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.drilldown-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.drilldown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 100%;
+    /*max-width: 1400px;*/
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+/* Entity Card */
+.entity-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    /* overflow: hidden; */
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* overflow: hidden; */
+    /* Removido para o tooltip não ser cortado */
+    z-index: 1;
+}
+
+.entity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
+    z-index: 100;
+    /* Garante que o tooltip do card focado fique sobre os outros cards */
+}
+
+.ack-indicator-container {
+    display: none;
+}
+
+.comment-icon.ack-floating {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    margin-left: 0;
+    z-index: 10;
+}
+
+.comment-icon {
+    margin-left: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.2s, transform 0.2s;
+}
+
+.comment-icon:hover {
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+
+.entity-indicators {
+    display: flex;
+    height: 45px;
+    width: 100%;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.indicator {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s ease;
+}
+
+/* Base colors for indicators (inactive/empty) */
+.indicator.purple {
+    background: rgba(147, 51, 234, 0.05);
+    border-right: 1px solid var(--border-color);
+    border-top-left-radius: 12px;
+    /* Mantém o arredondado sem overflow:hidden */
+}
+
+.indicator.red {
+    background: rgba(239, 68, 68, 0.05);
+    border-right: 1px solid var(--border-color);
+}
+
+.indicator.yellow {
+    background: rgba(245, 158, 11, 0.05);
+    border-right: 1px solid var(--border-color);
+}
+
+.indicator.green {
+    background: rgba(16, 185, 129, 0.05);
+    border-top-right-radius: 12px;
+    /* Mantém o arredondado sem overflow:hidden */
+}
+
+/* Active colors for indicators with glow */
+.indicator.purple.active {
+    background: rgba(147, 51, 234, 0.85);
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.5) inset;
+}
+
+.indicator.red.active {
+    background: rgba(239, 68, 68, 0.85);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) inset;
+}
+
+.indicator.yellow.active {
+    background: rgba(245, 158, 11, 0.85);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.5) inset;
+}
+
+.indicator.green.active {
+    background: rgba(16, 185, 129, 0.85);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5) inset;
+}
+
+.indicator[title] {
+    cursor: pointer;
+}
+
+.entity-name {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+}
+
+.entity-subtext {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-weight: 400;
+}
+
+/* Acknowledged Alerts - Standard Appearance */
+.entity-card.is-acknowledged {
+    background: var(--bg-panel) !important;
+    border-color: var(--border-color);
+    box-shadow: none !important;
+}
+
+
+
+.entity-card.is-acknowledged .indicator.active {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #ffffff !important;
+}
+
+/* Specific resets for active states to restore original subtle tints (0.05 opacity) */
+.entity-card.is-acknowledged .indicator.purple.active {
+    background: rgba(147, 51, 234, 0.05) !important;
+}
+
+.entity-card.is-acknowledged .indicator.red.active {
+    background: rgba(239, 68, 68, 0.05) !important;
+}
+
+.entity-card.is-acknowledged .indicator.yellow.active {
+    background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.empty-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 3rem;
+    font-size: 1.2rem;
+}
+
+/* =========================================
+   TOOLTIP CUSTOMIZADO (RECONHECIMENTO)
+   ========================================= */
+
+.custom-tooltip-container {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Telinha escondida por padrão */
+.custom-tooltip {
+    visibility: hidden;
+    background-color: #000000;
+    /* Fundo Preto solicitado */
+    color: #ffffff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 12px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 140%;
+    /* Posicionado acima do ícone */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Borda mais sutil para o fundo preto */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    /* Evita que a tooltip atrapalhe cliques em outros elementos */
+}
+
+/* Setinha apontando pra baixo */
+.custom-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    /* Seta no fundo do tooltip */
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #000000 transparent transparent transparent;
+    /* Seta preta para combinar com o fundo */
+}
+
+/* Exibe a telinha e anima pra cima ao passar o mouse */
+.custom-tooltip-container:hover .custom-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================
+   SERVER MONITORING CARD
+   ========================================= */
+
+#server-stats-container {
+    width: 100%;
+}
+
+.server-stats-card {
+    background: #1a1b23;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 15px 20px;
+    /*min-width: 320px;
+    max-width: 450px;*/
+    color: #f8fafc;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    width: 100%;
+}
+
+.server-stats-card:hover {
+    transform: translateY(-10px);
+    transition: 0.3s;
+    border: 1px solid #10b981;
+}
+
+.server-stats-card:not(:hover) {
+    transition: 0.3s;
+}
+
+
+.server-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.server-id-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.server-icon {
+    width: 40px;
+    height: 40px;
+    background: #2a2b35;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: #4b4d5a;
+    font-weight: 800;
+}
+
+.server-names h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.server-names p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 1px 0 0 0;
+}
+
+.status-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #10b981;
+}
+
+.status-badge.offline {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.status-badge.offline .status-dot {
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+}
+
+.metric-row {
+    margin-bottom: 10px;
+}
+
+.metric-label-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.metric-name {
+    color: #f8fafc;
+}
+
+.metric-value {
+    color: #ffffff;
+}
+
+.progress-container {
+    height: 5px;
+    background: #2a2b35;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #818cf8);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.uptime-label {
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 10px;
+}
+
+.uptime-value {
+    color: #f8fafc;
+    margin-left: 5px;
+}
