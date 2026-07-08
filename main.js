@@ -711,13 +711,18 @@ const app = {
                 const unack = countObj.unack;
                 const ack = countObj.total - unack;
 
+                if (ack === 0) {
+                    // Nenhum alerta reconhecido, mostra apenas o número sem o ícone
+                    return `${unack}`;
+                }
+
+                // Há alertas reconhecidos, monta o texto e o ícone
                 let text = '';
-                if (ack === 0) text = `${unack}`;
-                else if (unack === 0) text = `${ack}`;
+                if (unack === 0) text = `${ack}`;
                 else text = `${unack}/${ack}`;
 
                 let tooltip = '';
-                if (ack > 0 && ackMessage) {
+                if (ackMessage) {
                     const userName = ackMessage.split(':')[0].trim();
                     tooltip = `<span class="custom-tooltip">Reconhecido por: ${userName}</span>`;
                 }
