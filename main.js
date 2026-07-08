@@ -1161,9 +1161,12 @@ const app = {
                         <span style="font-size: 0.9rem; color: #ccc;">Disponibilidade da Rede (30d)</span>
                         <span id="avail-value-${equipmentId}" style="font-weight: bold; color: #fff;">Carregando...</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 0.8rem; color: #888;">Top Indisponibilidade:</span>
-                        <span id="avail-trigger-${equipmentId}" style="font-size: 0.85rem; color: #e74c3c;">Buscando dados reais...</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; padding-right: 15px;">
+                            <span style="font-size: 0.8rem; color: #888;">Top Indisponibilidade:</span>
+                            <span id="avail-trigger-${equipmentId}" style="font-size: 0.85rem; color: #e74c3c;">Buscando dados reais...</span>
+                        </div>
+                        <span id="unavail-value-${equipmentId}" style="font-size: 0.85rem; color: #e74c3c; white-space: nowrap; font-weight: bold;"></span>
                     </div>
                 </div>
             </div>
@@ -1370,6 +1373,8 @@ const app = {
     updateAvailabilityUI(equipmentId, availability, triggerName) {
         const valEl = document.getElementById(`avail-value-${equipmentId}`);
         const trEl = document.getElementById(`avail-trigger-${equipmentId}`);
+        const unavailEl = document.getElementById(`unavail-value-${equipmentId}`);
+        
         if (valEl) {
             if (availability === null) valEl.innerText = "N/A";
             else {
@@ -1381,9 +1386,20 @@ const app = {
             }
         }
         if (trEl) {
-            trEl.innerText = triggerName;
             if (availability === 100 || triggerName === 'Nenhuma indisponibilidade') {
+                trEl.innerText = triggerName;
                 trEl.style.color = '#2ecc71';
+                if (unavailEl) unavailEl.innerText = '';
+            } else if (availability !== null) {
+                const unavail = (100 - availability).toFixed(2).replace('.', ',');
+                trEl.innerText = triggerName;
+                trEl.style.color = '#e74c3c';
+                if (unavailEl) {
+                    unavailEl.innerText = `${unavail}%`;
+                }
+            } else {
+                trEl.innerText = triggerName;
+                if (unavailEl) unavailEl.innerText = '';
             }
         }
     },
