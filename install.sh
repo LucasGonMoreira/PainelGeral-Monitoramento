@@ -40,10 +40,29 @@ fi
 APP_DIR="/var/www/analist"
 REPO_URL="https://github.com/LucasGonMoreira/PainelGeral-Monitoramento.git" # <-- Altere aqui futuramente
 
+echo -e "${BLUE}[*] Solicitando configurações do Dashboard...${NC}"
+read -p "1. Digite a URL da API do seu Zabbix (ex: http://IP/zabbix/api_jsonrpc.php): " USER_URL < /dev/tty
+read -p "2. Digite o Token da API gerado no Zabbix: " USER_TOKEN < /dev/tty
+read -p "3. Digite o nome da sua empresa (ex: MEUPROVEDOR): " USER_COMPANY < /dev/tty
+
+if [ -z "$USER_URL" ] || [ -z "$USER_TOKEN" ] || [ -z "$USER_COMPANY" ]; then
+    echo -e "\nErro: Você deve preencher todas as informações para instalar!"
+    exit 1
+fi
+
 echo -e "${BLUE}[*] Clonando os arquivos do Dashboard...${NC}"
 rm -rf $APP_DIR
 git clone $REPO_URL $APP_DIR
-# Se não for usar git clone, você pode usar comandos curl/wget para baixar os arquivos
+
+echo -e "${BLUE}[*] Injetando configurações no código...${NC}"
+# Injeta URL e Token no Proxy PHP
+sed -i "s|http://172.16.2.190/zabbix/api_jsonrpc.php|$USER_URL|g" $APP_DIR/zabbix_proxy.php
+sed -i "s|96e3c59a09abd8c2f8c51ca6c59c72913e820d158255822b317b8717ef5e46d7|$USER_TOKEN|g" $APP_DIR/zabbix_proxy.php
+
+# Altera "NETLINE" pelo nome da empresa fornecido (em maiúsculo)
+USER_COMPANY_UPPER=$(echo "$USER_COMPANY" | tr '[:lower:]' '[:upper:]')
+sed -i "s|NETLINE|$USER_COMPANY_UPPER|g" $APP_DIR/index.html
+sed -i "s|Netline|$USER_COMPANY_UPPER|g" $APP_DIR/index.html
 
 # 4. Ajusta permissões
 chown -R $WEB_USER:$WEB_USER $APP_DIR

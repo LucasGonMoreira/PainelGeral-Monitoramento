@@ -46,7 +46,7 @@ Logo após clonar/instalar o repositório, você deve apontar o painel para o se
 
 ```php
 // Altere para a URL real da API do seu Zabbix
-$ZABBIX_URL = 'http://[SUA-API]/zabbix/api_jsonrpc.php';
+$ZABBIX_URL = 'http://172.16.2.190/zabbix/api_jsonrpc.php';
 
 // Gere um token no Zabbix (Administração -> Usuários -> Tokens de API)
 $ZABBIX_API_TOKEN = 'SEU_TOKEN_AQUI_1234567890';
